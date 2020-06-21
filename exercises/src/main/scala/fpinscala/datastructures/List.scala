@@ -37,20 +37,20 @@ object List { // `List` companion object. Contains functions for creating and wo
   def append[A](a1: List[A], a2: List[A]): List[A] =
     a1 match {
       case Nil => a2
-      case Cons(h,t) => Cons(h, append(t, a2))
+      case Cons(h,t) => Cons(h, List.append(t, a2))
     }
 
   def foldRight[A,B](as: List[A], z: B)(f: (A, B) => B): B = // Utility functions
     as match {
       case Nil => z
-      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+      case Cons(x, xs) => f(x, List.foldRight(xs, z)(f))
     }
 
   def sum2(ns: List[Int]) =
-    foldRight(ns, 0)((x,y) => x + y)
+    List.foldRight(ns, 0)((x,y) => x + y)
 
   def product2(ns: List[Double]) =
-    foldRight(ns, 1.0)(_ * _) // `_ * _` is more concise notation for `(x,y) => x * y`; see sidebar
+    List.foldRight(ns, 1.0)(_ * _) // `_ * _` is more concise notation for `(x,y) => x * y`; see sidebar
 
 
   def tail[A](l: List[A]): List[A] = l match {
@@ -128,20 +128,17 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def filter[A](l: List[A])(pred: A => Boolean): List[A] = l match {
     case Nil        => Nil
-    case Cons(h, t) => if (pred(h)) Cons(h, t) else filter(t)
-  }
-  def append[A](l: List[A], b: List[A]): List[A] = {
-    foldRight(l, Nil:List[A])(Cons(_, _))
+    case Cons(h, t) => if (pred(h)) Cons(h, t) else List.filter(t)(pred)
   }
   def flatMap[A, B](l: List[A])(f: A => List[B]): List[B] = l match {
     case Nil => Nil:List[B]
-    case Cons(h, t) => append(f(h), flatMap(t)(f))
+    case Cons(h, t) => append(f(h), List.flatMap(t)(f))
   }
 
   def zipWith[A, B, C](l1: List[A], l2: List[B])(f: (A, B) => C): List[C] = (l1, l2) match {
     case (_, Nil) => Nil
     case (Nil, _) => Nil
-    case (Cons(h1, t1), Cons(h2, t2)) => Cons(f(h1, h2), zipWith(t1, t2)(f))
+    case (Cons(h1, t1), Cons(h2, t2)) => Cons(f(h1, h2), List.zipWith(t1, t2)(f))
   }
 
   def main(args: Array[String]): Unit = {
